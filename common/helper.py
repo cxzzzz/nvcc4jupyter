@@ -10,4 +10,4 @@ def get_argparser():
 
 def print_out(out: str):
     for l in out.split('\n'):
-        print(l,flush=True)
+        print(l.decode("utf8"),flush=True)
