@@ -27,21 +27,22 @@ class NVCCPluginV2(Magics):
 
     @staticmethod
     def compile(output_dir, file_paths, out):
-        res = subprocess.check_output(
-            [compiler, '-I' + output_dir, file_paths, "-o", out, '-Wno-deprecated-gpu-targets'], stderr=subprocess.STDOUT)
-        helper.print_out(res)
+        p = subprocess.Popen([compiler, '-I' + output_dir, file_paths, "-o", out, '-Wno-deprecated-gpu-targets'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        while p.poll() is None:
+            line = p.stdout.readline()
+            helper.print_out(line)
 
     def run(self, timeit=False):
         if timeit:
             stmt = f"subprocess.check_output(['{self.out}'], stderr=subprocess.STDOUT)"
             output = self.shell.run_cell_magic(
                 magic_name="timeit", line="-q -o import subprocess", cell=stmt)
+            helper.print_out(output)
         else:
-            output = subprocess.check_output(
-                [self.out], stderr=subprocess.STDOUT)
-            output = output.decode('utf8')
-
-        helper.print_out(output)
+            p = subprocess.Popen([self.out], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            while p.poll() is None:
+                line = p.stdout.readline()
+                helper.print_out(line)
         return None
 
     @magic_arguments()
