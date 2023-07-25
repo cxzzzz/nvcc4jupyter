@@ -32,7 +32,7 @@ class NVCCPlugin(Magics):
                 magic_name="timeit", line="-q -o import subprocess", cell=stmt)
             helper.print_out(output)
         else:
-            p = subprocess.Popen([[file_path + ".out"]], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            p = subprocess.Popen([file_path + ".out"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
             while p.poll() is None:
                 line = p.stdout.readline()
                 helper.print_out(line)
